@@ -1,0 +1,45 @@
+//第一种解法
+class Solution {
+    public int lengthOfLongestSubstring(String s) {
+        //利用set
+        int n = s.length() ;
+        int i = 0 , j = 0 , ans = 0 ;
+        Set<Character> set = new HashSet<Character>() ;
+        while(i < n && j < n){
+            //当索引为j的字符不在集合中时，加入集合，并更新最大值
+            if(!set.contains(s.charAt(j))){
+                set.add(s.charAt(j++)) ;
+                ans = Math.max(j - i , ans) ;
+            }
+            //当索引为j的字符在集合中存在时，则说明前面出现过该字符，移动索引i，移除集合中的元素，使得集合中不存在该字符
+            else{
+                set.remove(s.charAt(i++)) ;
+            }
+
+        }
+        return ans ;
+    }
+}
+
+//第二种解法
+class Solution {
+    public int lengthOfLongestSubstring(String s) {
+        //利用HashMap
+        int n = s.length() ;
+        int ans = 0 ;
+        Map<Character , Integer> map = new HashMap<Character , Integer>() ;
+        for(int j = 0 , i = 0 ; j < n ; j++){
+            //当存在重复字符时，移动i索引
+            if(map.containsKey(s.charAt(j))){
+                i = Math.max(i , map.get(s.charAt(j))) ;
+            }
+            //更新最大值
+            ans = Math.max(ans , j - i) ;
+            //将字符放入map，用于查找是否存在重复字符和更新i索引
+            map.put(s.charAt(j) , j + 1) ;
+
+        }
+        return ans ;
+
+    }
+}

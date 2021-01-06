@@ -1,0 +1,69 @@
+思路:可以根据给定的equations建立一个有向图，路径的长度看成两个节点相除的值。构建完图之后，对于queries中的每个查询，可以从起点出发，不断起点到当前节点的路径长度，直到搜索到终点为止。
+class Solution {
+    public double[] calcEquation(List<List<String>> equations, double[] values, List<List<String>> queries) {
+        //结果
+        double[] ans = new double[queries.size()] ;
+        Arrays.fill(ans , -1.0) ;
+        int vars = 0 ;
+        //将字符串映射成整数
+        Map<String , Integer> map = new HashMap<String , Integer>() ;
+        for(int i = 0 ; i < equations.size() ; i++){
+            String first = equations.get(i).get(0) ;
+            String second = equations.get(i).get(1) ;
+            if(!map.containsKey(first)){
+                map.put(first , vars++) ;
+            }
+            if(!map.containsKey(second)){
+                map.put(second , vars++) ;
+            }
+        }
+        //存储图的边
+        List<Pair>[] edge = new List[vars] ;
+        for(int i = 0 ; i < vars ; i++) edge[i] = new ArrayList<Pair>() ;
+        //将边加入edge，边的权值为相除的值
+        for(int i = 0 ; i < equations.size() ; i++){
+            int va = map.get(equations.get(i).get(0)) ;
+            int vb = map.get(equations.get(i).get(1)) ;
+            edge[va].add(new Pair(vb , values[i])) ;
+            edge[vb].add(new Pair(va , 1.0 / values[i])) ;
+        }
+        //对于每个query，深度优先搜索一次
+        for(int i = 0 ; i < queries.size() ; i++){
+            String a = queries.get(i).get(0) ;
+            String b = queries.get(i).get(1) ;
+            //如果字符串没在equations中出现过，则结果为-1.0
+            if(!map.containsKey(a) || !map.containsKey(b)){
+                ans[i] = -1.0 ;
+                continue ;
+            }
+            //记录图中已经访问过的点
+            Set<Integer> visited = new HashSet<Integer>() ;
+            int s = map.get(a) ;
+            int e = map.get(b) ;
+            dfs(s , e , edge , visited , 1.0 , ans , i) ;          
+        }
+        return ans ;
+    }
+    //从节点s深度优先搜索，看是否能搜到e节点
+    public void dfs(int s , int e , List<Pair>[] edge , Set<Integer> visited , double value , double[] ans , int i){
+        //搜索到e节点，给结果赋值
+        if(s == e){
+            ans[i] = value ;
+            return ;
+        }
+        if(visited.contains(s)) return ;
+        visited.add(s) ;
+        for(Pair p : edge[s]){
+            dfs(p.index , e , edge , visited , value * p.value , ans , i) ;
+        }        
+    }
+
+}
+class Pair{
+    int index ;
+    double value ;
+    Pair(int index , double value){
+        this.index = index ;
+        this.value = value ;
+    }
+}

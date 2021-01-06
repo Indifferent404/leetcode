@@ -1,3 +1,6 @@
+/*
+  思路：设置一个左指针和右指针，当该区间不存在重复字符时，向右移动右指针。当该区间存在重复字符时，移动左指针，使得该区间不存在重复字符，然后重复上述操作。
+*/
 //第一种解法
 class Solution {
     public int lengthOfLongestSubstring(String s) {

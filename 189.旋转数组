@@ -1,0 +1,51 @@
+/**
+  思路:利用数组反转的思想，先将前n-k个数反转，然后将后k个数反转，最后反转整个数组。(该思路与先将最后k个元素记录下来，再将前n-k个元素向右平移k步，
+  最后将之前记录下来的k个元素填入原来数组的前k个位置具有相同的效果)当我们旋转数组k次时，前n-k%n个元素移动k位移到了最后，数组后面的k％n个元素移到前面。
+*/
+class Solution {
+    public void rotate(int[] nums, int k) {
+        //利用数组反转
+        int n = nums.length ;
+        k = k % n ;
+        //将前n-k个数反转
+        reverse(nums , 0 , n - k - 1) ;
+        //将后k个数反转
+        reverse(nums , n - k , n - 1) ;
+        //将整个数组反转
+        reverse(nums , 0 , n - 1) ;
+
+    }
+    //反转数组
+    public void reverse(int[] nums , int start , int end){
+        while(start < end){
+            int temp = nums[start] ;
+            nums[start] = nums[end] ;
+            nums[end] = temp ;
+            start++ ;
+            end--;
+        }
+    }
+}
+
+/**
+  方法二
+*/
+class Solution {
+    public void rotate(int[] nums, int k) {
+        //循环替代
+        if(nums.length == 0 || k % nums.length == 0) return ;
+        int n = nums.length ;
+        k = k % nums.length ;
+        int start = 0 , cur = nums[0] , pre = 0 , idx = 0 ;
+        for(int i = 0 ; i < n ; i++){
+            pre = cur ;
+            idx = (idx + k) % n ;
+            cur = nums[idx] ;
+            nums[idx] = pre ;
+            if(idx == start){
+                idx = ++start ;
+                cur = nums[idx] ;
+            }
+        }
+    }
+}
